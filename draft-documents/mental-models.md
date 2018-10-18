@@ -50,7 +50,9 @@ Whether you are gay, a Republican, or a gay Republican, it is your choice how yo
 ### Data (Attribute)
 
 The data mental model sees identity as the set of attributes related to an entity. Enshrined in ISO/IEC 24760-1, an international standard for identity management, this mental model is the primary focus for many engineers.
-Is this data about a particular entity?
+
+**Is this data about a particular entity?**
+
 Limiting the model of identity to related data, in a single system, makes it easier to build. It draws a bright line for engineers to focus on the accepted facts and information within the system they are developing. This model ignores the consequences of common identification across different systems for the sake of simplicity and feature management. It is the simplest model for engineering a system and, in part because of that, it is the only mental model that has a formal definition as an international standard.
 
 ### Relationship (Context)

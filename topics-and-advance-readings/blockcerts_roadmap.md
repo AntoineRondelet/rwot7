@@ -2,6 +2,29 @@
 
 Authors: Kim Hamilton Duffy, Anthony Ronning, Lucas Parker, and Peter Scott
 
+Table of Contents:
+- [Blockcerts -- where we are, and what's next](#blockcerts----where-we-are--and-what-s-next)
+- [About Blockcerts](#about-blockcerts)
+- [Reasons for Success](#reasons-for-success)
+- [Obstacles we faced](#obstacles-we-faced)
+- [Current Challenges](#current-challenges)
+  * [Remove centralization introduced by hosted Issuer Profiles](#remove-centralization-introduced-by-hosted-issuer-profiles)
+  * [Remove centralization introduced by hosted revocation lists](#remove-centralization-introduced-by-hosted-revocation-lists)
+  * [Handle recipient key lifecycle in a first-class way](#handle-recipient-key-lifecycle-in-a-first-class-way)
+  * [Increase flexibility of schema across different use cases -- any privacy/security for sensitive claims](#increase-flexibility-of-schema-across-different-use-cases----any-privacy-security-for-sensitive-claims)
+- [Roadmap](#roadmap)
+  * [Open Badges / Verifiable Credentials Alignment](#open-badges---verifiable-credentials-alignment)
+  * [Verifiable Displays (now Resource Integrity Proofs)](#verifiable-displays--now-resource-integrity-proofs-)
+  * [DIDs](#dids)
+  * [Revocation](#revocation)
+  * [Blockcerts Governance](#blockcerts-governance)
+- [Additional goals](#additional-goals)
+  * [Scaleable distributed timestamps](#scaleable-distributed-timestamps)
+  * [Privacy and security](#privacy-and-security)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 # About Blockcerts
 
 Blockcerts is an open standard and [set of open source libraries](https://github.com/blockchain-certificates) for creating, issuing, viewing, and verifying blockchain-anchored credentials. In addition to commercial deployment by Learning Machine, it's used by hundreds of independent implementers (per github metrics and community discussion) and has a [thriving discussion forum for implementers and researchers](https://community.blockcerts.org/).
@@ -82,7 +105,7 @@ A critical foundational step is alignment of [Open Badges are Verifiable Credent
 More significantly, the Verifiable Credentials specification is intended for a range of credentials, and factors in a range of privacy and security concerns applicable for low-to-high stakes credentials. 
 
 
-## Verifiable Displays
+## Verifiable Displays (now Resource Integrity Proofs)
 
 If all credentials being issued are identical in structure and vocabulary, it is possible to assume a common set of fields in a display. However, when these vary, social exploits are possible. 
 
@@ -92,14 +115,13 @@ This is a problem that's less relevant in machine-to-machine credential verifica
 
 The verifier and viewer must be able to know that the display they are seeing matches what was intended by the issuer and has not been tampered with.
 
-A general solution for this is proposed in [Verifiable Displays](https://github.com/WebOfTrustInfo/rwot7/blob/master/topics-and-advance-readings/verifiable_displays.md)
+A general solution for this is proposed in [Resource Integrity Proofs](https://github.com/WebOfTrustInfo/rwot7/blob/master/final-documents/resource-integrity-proofs.pdf)
 
 ## DIDs
 
 Moving to Decentralized Identifiers removes the issuer profile as a single-point-of-failure. It improves longevity (enabling even life-long recipient ownership) by promoting key lifecycle to a first-class notion. I.e. any viable system must factor in the fact that cryptopgrahic keys should be rotated as a best practice, and should factor in key loss.
 
 [Open Badges are Verifiable Credentials](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2018/blob/master/final-documents/open-badges-are-verifiable-credentials.pdf) also outlines how DIDs will appear in the new Blockcerts schema.
-
 
 ## Revocation
 
@@ -115,24 +137,20 @@ Perhaps our highest priority is setting up an independent foundation to steward 
 
 # Additional goals
 
-## Root of trust
+## Scaleable distributed timestamps
+
+Currently Blockcerts uses the blockchain transaction (associated with a credential) to determine both of these items during verification:
+1. timestamp (proof of existence at a certain time)
+2. issuer signing key
  
-A useful consequence of DIDs is that, in some cases, credentials will not need to be anchored to a blockchain. Informally the idea is that, if the issuer is the source of truth, and you can verify the issuer controlled the signing key at the time of issuance, then you can similarly trust the timestamp inserted by the issuer into the signed payload of the credential. This is exactly what's enabled by DIDs.
+For future versions, we propose using a timestamping service (like Open Timestamps) for #1 and a separate issuer signature for #2. The flow could look like this:
+1. issuer uses Open Timestamps to obtain an ots proof of the content; appends proof
+2. issuer signs payload; appends proof
 
-In the current version of Blockcerts, the timestamp is established (at least within a range of confidence) by the transaction anchoring the credential batch to the blockchain. The verification process compares that signing key and timestamp against the issuer-hosted profile.
+This has an added benefit that the second operation does not need to be on-chain, resulting in a more flexible/scaleable approach.
 
-DIDs allow us to invert that comparison -- since most DID methods use blockchain anchoring, we can now audit keys and their effective timestamps.  
-
-There are corner cases to consider, meaning this approach is not necessarily universally preferred.
-
-Note our assumption that the issuer is the source of truth. For example, a university issuer is the source of truth for credentials they issue. If the timestamp is in the signed credential, and that timestamp occurred in a valid range for the associated key, then everything checks out. 
-
-The problems that stand out are (1) issuer mistakes (inserting the wrong date) and (2) malicious internal users. However, the first would be corrected by the issuer; the second is addressed by auditable key revocation enabled by DIDs. 
-
-If the issuer is not the universally accepted source of truth, there may be problems. This is more of a problem for establishing original provenance, e.g. for a piece of artwork. An independently auditable timestamp on the claim itself would presumably be required.
-
-However, even this can be addressed (for scenarios where fairly-exact, auditable timestamps are critical) is to use a timestamping service, like Open Timestamps. A sketch of a Open Timestamps LD signature was developed by Peter Todd and Kim Duffy at Decentralized Web summit (detail to come).
-
+> TODO: A sketch of a Open Timestamps LD signature was developed woth Peter Todd at Decentralized Web summit (details to come).
+> TODO: Work out the chained signature samples.
 
 ## Privacy and security
 
